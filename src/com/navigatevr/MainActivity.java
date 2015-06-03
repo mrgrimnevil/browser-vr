@@ -3,13 +3,16 @@ package com.navigatevr;
 import org.gearvrf.GVRActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.oculus.VRTouchPadGestureDetector;
 import com.oculus.VRTouchPadGestureDetector.OnTouchPadGestureListener;
@@ -34,6 +37,9 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+		mDetector = new VRTouchPadGestureDetector(this);
+		this.takeKeyEvents(true);
 
         createWebView();
 
@@ -73,6 +79,8 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
                 return true;
             }
         });
+
+        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
     }
 
@@ -138,6 +146,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+		mDetector.onTouchEvent(event);
     	mScript.onTouchEvent(event);
         return true;
     }
@@ -148,6 +157,50 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 		mScript.onSwipe(e, swipeDirection, velocityX, velocityY);
 		Log.v(TAG, "onSwipe");
 		return false;
+	}
+
+	// WebView interface
+	class WebAppInterface {
+		Context mContext;
+
+		WebAppInterface(Context c) {
+			mContext = c;
+		}
+
+		@JavascriptInterface
+		public void showToast(String toast) {
+	        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+		}
+
+		@JavascriptInterface
+		public void setBackgroundColor(String color) {
+			mScript.setBackgroundColor(color);
+		}
+
+		@JavascriptInterface
+		public void setBackgroundImage(String imageUrl) {
+			mScript.setBackgroundImage(imageUrl);
+		}
+
+		@JavascriptInterface
+		public void rotateObject(String name) {
+			mScript.rotateObject(name);
+		}
+
+		@JavascriptInterface
+		public void moveObject(String name, float x, float y, float z) {
+			mScript.moveObject(name, x,y,z);
+		}
+
+		@JavascriptInterface
+		public void scaleObject(String name, float x, float y, float z) {
+			mScript.scaleObject(name, x,y,z);
+		}
+
+		@JavascriptInterface
+		public void createObject(String type, String name) {
+			mScript.createObject(type, name);
+		}
 	}
 
 }

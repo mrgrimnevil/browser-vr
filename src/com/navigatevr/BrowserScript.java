@@ -1,16 +1,25 @@
 package com.navigatevr;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimationEngine;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRWebViewSceneObject;
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.webkit.WebView;
@@ -29,9 +38,13 @@ public class BrowserScript extends GVRScript {
     private GVRScene mScene;
     private GVRCameraRig mRig;
 
+	private List<GVRPicker.GVRPickedObject> pickedObjects;
+
     private GVRSceneObject mContainer;
 
-	List<GVRPicker.GVRPickedObject> pickedObjects;
+    private GVRWebViewSceneObject webViewObject;
+
+    private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
 
     BrowserScript(MainActivity activity) {
         mActivity = activity;
@@ -46,10 +59,14 @@ public class BrowserScript extends GVRScript {
         mScene = gvrContext.getNextMainScene();
         mRig = mScene.getMainCameraRig();
 
+        mRig.getLeftCamera().setBackgroundColor(Color.DKGRAY);
+        mRig.getRightCamera().setBackgroundColor(Color.DKGRAY);
+
+
         mContainer = new GVRSceneObject(gvrContext);
         mScene.addSceneObject(mContainer);
 
-        GVRWebViewSceneObject webViewObject = createWebViewObject(gvrContext);
+        webViewObject = createWebViewObject(gvrContext);
 
         webViewObject.getTransform().setPosition(0f, 0f, -3.0f);
 
@@ -65,8 +82,87 @@ public class BrowserScript extends GVRScript {
         return webObject;
     }
 
+    // make a scene object of type
+    public void createObject(String type, String name) {
+		GVRTexture texture = mContext.loadTexture(
+				new GVRAndroidResource(mContext, R.raw.earthmap1k ));
+
+        GVRSceneObject obj;
+        if (type == "cube")
+        	obj = new GVRCubeSceneObject(mContext);
+        else if (type == "sphere")
+        	obj = new GVRSphereSceneObject(mContext);
+        else // default : plane
+        	obj = new GVRSceneObject(mContext);
+
+        obj.setName(name);
+
+		GVRMaterial material = new GVRMaterial(mContext);
+		material.setMainTexture(texture);
+		obj.getRenderData().setMaterial(material);
+
+        obj.getTransform().setPosition(2f, 0f, -2.0f);
+
+        mContainer.addChildObject(obj);
+
+        objects.put(name, obj);
+    }
+
+    float angle = 0f;
+    float[] yAxis = { 0f, 1f, 0f };
+    public void rotateObject(String name) {
+    	GVRSceneObject obj = objects.get(name);
+    	if (name == null)
+    		return;
+
+    	angle += 5f;
+
+    	obj.getTransform().setRotationByAxis(angle, yAxis[0], yAxis[1], yAxis[2]);
+    }
+
+    public void moveObject(String name, float x, float y, float z) {
+    	GVRSceneObject obj = objects.get(name);
+    	if (name == null)
+    		return;
+
+    	obj.getTransform().setPosition(x, y, z);
+    }
+
+    public void scaleObject(String name, float x, float y, float z) {
+    	GVRSceneObject obj = objects.get(name);
+    	if (name == null)
+    		return;
+
+    	obj.getTransform().setScale(x, y, z);
+    }
+
+    public void setBackgroundColor(String colorStr) {
+    	try {
+    		int color = Color.parseColor(colorStr);
+            mRig.getLeftCamera().setBackgroundColor(color);
+            mRig.getRightCamera().setBackgroundColor(color);
+    	} catch (IllegalArgumentException e) {
+    		Log.w(TAG, "Exception : " + e);
+    	}
+    }
+
+    public void setBackgroundImage(String imageUrl) {
+
+    }
+
+    boolean needToMakeObject = false;
+    boolean objCreated = false;
+    String objType = "cube";
+
     @Override
     public void onStep() {
+    	if (needToMakeObject && !objCreated) {
+    		this.createObject(objType, "cube");
+    		needToMakeObject = false;
+    		objCreated = true;
+    	}
+
+
 		pickedObjects = GVRPicker.findObjects(mScene, 0f,0f,0f, 0f,0f,-1f);
 
 		for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
@@ -87,7 +183,7 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onSingleTap(MotionEvent event) {
-
+    	needToMakeObject = true;
     }
 
     public void onButtonDown() {
@@ -95,10 +191,6 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onLongButtonPress(int keyCode) {
-
-    }
-
-    public void onTap() {
 
     }
 
