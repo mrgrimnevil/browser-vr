@@ -108,29 +108,34 @@ public class BrowserScript extends GVRScript {
         objects.put(name, obj);
     }
 
-    float angle = 0f;
     float[] yAxis = { 0f, 1f, 0f };
-    public void rotateObject(String name) {
+    public void rotateObject(String name, float angle, float x, float y, float z) {
     	GVRSceneObject obj = objects.get(name);
-    	if (name == null)
+    	if (obj == null)
     		return;
 
-    	angle += 5f;
-
-    	obj.getTransform().setRotationByAxis(angle, yAxis[0], yAxis[1], yAxis[2]);
+    	obj.getTransform().setRotationByAxis(angle, x,y,z);
     }
 
     public void moveObject(String name, float x, float y, float z) {
     	GVRSceneObject obj = objects.get(name);
-    	if (name == null)
+    	if (obj == null)
     		return;
 
     	obj.getTransform().setPosition(x, y, z);
     }
 
+    public void translateObject(String name, float x, float y, float z) {
+    	GVRSceneObject obj = objects.get(name);
+    	if (obj == null)
+    		return;
+
+    	obj.getTransform().translate(x, y, z);
+    }
+
     public void scaleObject(String name, float x, float y, float z) {
     	GVRSceneObject obj = objects.get(name);
-    	if (name == null)
+    	if (obj == null)
     		return;
 
     	obj.getTransform().setScale(x, y, z);

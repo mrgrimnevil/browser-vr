@@ -12,6 +12,10 @@ h1 { font-size: 64px; margin: 0px; text-align: center; }
 <img src="gearvr_logo.jpg" width="500px" height="455px">
 <script>
 
+var frame = 0;
+var time = Date.now();
+var dt = 0;
+
 setTimeout(function(){
 
     Android.showToast("hello, world.");
@@ -20,11 +24,25 @@ setTimeout(function(){
 
 setTimeout(function(){
 
-    setInterval(function(){
-        Android.rotateObject("cube");
-    }, 1000 / 30);
+    step();
 
-}, 20*1000);
+}, 15*1000);
+
+var angle = 0.0;
+var axis = [0,1,0];
+function step() {
+    requestAnimationFrame(step);
+    
+    if (frame++ % 2)
+        return;
+       
+    Android.rotateObject("cube", angle, axis[0], axis[1], axis[2]);
+
+    angle += 5.0;
+
+    dt = Date.now() - time;
+    time = Date.now();
+}
 
 </script>
 </body>
