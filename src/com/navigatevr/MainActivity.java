@@ -194,7 +194,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
 		@JavascriptInterface
 		public void translateObject(String name, float x, float y, float z) {
-			mScript.translateObject(name, x, y, z);
+			mScript.translateObject(name, x,y,z);
 		}
 
 		@JavascriptInterface

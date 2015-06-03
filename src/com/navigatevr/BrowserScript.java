@@ -83,7 +83,7 @@ public class BrowserScript extends GVRScript {
     }
 
     // make a scene object of type
-    public void createObject(String type, String name) {
+    public GVRSceneObject createObject(String type, String name) {
 		GVRTexture texture = mContext.loadTexture(
 				new GVRAndroidResource(mContext, R.raw.earthmap1k ));
 
@@ -101,11 +101,9 @@ public class BrowserScript extends GVRScript {
 		material.setMainTexture(texture);
 		obj.getRenderData().setMaterial(material);
 
-        obj.getTransform().setPosition(2f, 0f, -2.0f);
-
-        mContainer.addChildObject(obj);
-
         objects.put(name, obj);
+
+        return obj;
     }
 
     float[] yAxis = { 0f, 1f, 0f };
@@ -155,19 +153,8 @@ public class BrowserScript extends GVRScript {
 
     }
 
-    boolean needToMakeObject = false;
-    boolean objCreated = false;
-    String objType = "cube";
-
     @Override
     public void onStep() {
-    	if (needToMakeObject && !objCreated) {
-    		this.createObject(objType, "cube");
-    		needToMakeObject = false;
-    		objCreated = true;
-    	}
-
-
 		pickedObjects = GVRPicker.findObjects(mScene, 0f,0f,0f, 0f,0f,-1f);
 
 		for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
@@ -187,8 +174,22 @@ public class BrowserScript extends GVRScript {
 
     }
 
+    // temp
+    String objType = "cube";
+    float yPos = 0f;
+
     public void onSingleTap(MotionEvent event) {
-    	needToMakeObject = true;
+    	mContext.runOnGlThread(new Runnable() {
+    		@Override
+			public void run() {
+        		GVRSceneObject obj = createObject(objType, "cube");
+
+                obj.getTransform().setPosition(2f, yPos, -2.0f);
+                mContainer.addChildObject(obj);
+
+                yPos += 2f;
+    		}
+    	});
     }
 
     public void onButtonDown() {
