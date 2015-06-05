@@ -44,6 +44,7 @@ public class BrowserScript extends GVRScript {
 
     private GVRSceneObject mContainer;
 
+    private GVRSceneObject mCursor;
     private GVRWebViewSceneObject webViewObject;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
@@ -71,11 +72,26 @@ public class BrowserScript extends GVRScript {
         mContainer = new GVRSceneObject(gvrContext);
         mScene.addSceneObject(mContainer);
 
+        mCursor = createCursor();
+        mRig.getOwnerObject().addChildObject(mCursor);
+
         webViewObject = createWebViewObject(gvrContext);
-
         webViewObject.getTransform().setPosition(0f, 0f, -3.0f);
-
         mContainer.addChildObject(webViewObject);
+    }
+
+    private GVRSceneObject createCursor() {
+        GVRTexture texture = mContext.loadTexture(
+                new GVRAndroidResource( mContext, R.raw.cross) );
+
+        GVRSceneObject cursor = new GVRSceneObject(mContext, 0.05f, 0.05f, texture);
+
+        cursor.getRenderData().setDepthTest(false);
+        cursor.getRenderData().setRenderingOrder(100000);
+
+        cursor.getTransform().setPositionZ( -3.0f );
+
+        return cursor;
     }
 
     private GVRWebViewSceneObject createWebViewObject(GVRContext gvrContext) {
