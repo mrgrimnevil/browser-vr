@@ -18,7 +18,6 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.scene_objects.GVRWebViewSceneObject;
 
 import android.graphics.Color;
 import android.util.Log;
@@ -45,7 +44,7 @@ public class BrowserScript extends GVRScript {
     private GVRSceneObject mContainer;
 
     private GVRSceneObject mCursor;
-    private GVRWebViewSceneObject webViewObject;
+    private NaviWebViewSceneObject webViewObject;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
     private Map<String, String> dict = new HashMap<String, String>();
@@ -78,6 +77,7 @@ public class BrowserScript extends GVRScript {
         webViewObject = createWebViewObject(gvrContext);
         webViewObject.getTransform().setPosition(0f, 0f, -3.0f);
         mContainer.addChildObject(webViewObject);
+        //webViewObject.pauseRender();
     }
 
     private GVRSceneObject createCursor() {
@@ -94,9 +94,9 @@ public class BrowserScript extends GVRScript {
         return cursor;
     }
 
-    private GVRWebViewSceneObject createWebViewObject(GVRContext gvrContext) {
+    private NaviWebViewSceneObject createWebViewObject(GVRContext gvrContext) {
         WebView webView = mActivity.getWebView();
-        GVRWebViewSceneObject webObject = new GVRWebViewSceneObject(gvrContext,
+        NaviWebViewSceneObject webObject = new NaviWebViewSceneObject(gvrContext,
                 3.0f, 3.0f, webView);
         webObject.setName("webview-1");
 
@@ -227,6 +227,10 @@ public class BrowserScript extends GVRScript {
 
     }
 
+    public void refreshWebView() {
+        webViewObject.refresh();
+    }
+
     public void createNewObject(String name, String type) {
         taskQueue.add(name+":"+type);
     }
@@ -274,5 +278,20 @@ public class BrowserScript extends GVRScript {
             float velocityX, float velocityY) {
         return true;
     }
+
+    // for debug, hide
+    /*@Override
+    public SplashMode getSplashMode() {
+        return SplashMode.NONE;
+    }*/
+
+    // custom splash
+    /*@Override
+    public GVRTexture getSplashTexture(GVRContext ctx) {
+        GVRTexture tex = ctx.loadTexture(
+                new GVRAndroidResource( ctx, R.raw.? ) );
+        return tex;
+    }*/
+
 
 }

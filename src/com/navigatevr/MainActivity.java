@@ -172,6 +172,10 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
             Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
         }
 
+        public void refreshWebView() {
+            mScript.refreshWebView();
+        }
+
         @JavascriptInterface
         public String getValue(String key) {
             return mScript.getValue(key);
