@@ -22,13 +22,13 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
     private static final String TAG = "MainActivity";
 
-	private VRTouchPadGestureDetector mDetector = null;
+    private VRTouchPadGestureDetector mDetector = null;
 
-	private static final int BUTTON_INTERVAL = 1000;
-	private static final int TAP_INTERVAL = 300;
+    private static final int BUTTON_INTERVAL = 1000;
+    private static final int TAP_INTERVAL = 300;
 
-	private long mLatestButton = 0;
-	private long mLatestTap = 0;
+    private long mLatestButton = 0;
+    private long mLatestTap = 0;
 
     private BrowserScript mScript;
 
@@ -38,8 +38,8 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		mDetector = new VRTouchPadGestureDetector(this);
-		this.takeKeyEvents(true);
+        mDetector = new VRTouchPadGestureDetector(this);
+        this.takeKeyEvents(true);
 
         createWebView();
 
@@ -53,7 +53,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-	private void createWebView() {
+    private void createWebView() {
         webView = new WebView(this);
         webView.setInitialScale(100);
 
@@ -86,11 +86,11 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
 
     WebView getWebView() {
-        return webView; 
+        return webView;
     }
 
     void loadUrl(String url) {
-    	webView.loadUrl(url);
+        webView.loadUrl(url);
     }
 
     @Override
@@ -99,127 +99,127 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
         mScript.onPause();
     }
 
-	@Override
-	public void onBackPressed() {
-		if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
-			mLatestButton = System.currentTimeMillis();
-			mScript.onButtonDown();
-		}
-	}
+    @Override
+    public void onBackPressed() {
+        if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
+            mLatestButton = System.currentTimeMillis();
+            mScript.onButtonDown();
+        }
+    }
 
-	@Override
-	public void onLongPress(MotionEvent e) {
-		Log.v(TAG, "onLongPress");
-	}
+    @Override
+    public void onLongPress(MotionEvent e) {
+        Log.v(TAG, "onLongPress");
+    }
 
-	@Override
-	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			mLatestButton = System.currentTimeMillis();
-			mScript.onLongButtonPress(keyCode);
-		}
-		return super.onKeyLongPress(keyCode, event);
-	}
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            mLatestButton = System.currentTimeMillis();
+            mScript.onLongButtonPress(keyCode);
+        }
+        return super.onKeyLongPress(keyCode, event);
+    }
 
-	@Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		int keyCode = event.getKeyCode();
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
 
-		if (event.getAction() == KeyEvent.ACTION_DOWN) {
-			mScript.onKeyDown(keyCode, event);
-		} else if (event.getAction() == KeyEvent.ACTION_UP) {
-			mScript.onKeyUp(keyCode, event);
-		}
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            mScript.onKeyDown(keyCode, event);
+        } else if (event.getAction() == KeyEvent.ACTION_UP) {
+            mScript.onKeyUp(keyCode, event);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public boolean onSingleTap(MotionEvent event) {
-		Log.v(TAG, "onSingleTap");
-		if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-			mLatestTap = System.currentTimeMillis();
-			mScript.onSingleTap(event);
-		}
-		return false;
-	}
+    @Override
+    public boolean onSingleTap(MotionEvent event) {
+        Log.v(TAG, "onSingleTap");
+        if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
+            mLatestTap = System.currentTimeMillis();
+            mScript.onSingleTap(event);
+        }
+        return false;
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-		mDetector.onTouchEvent(event);
-    	mScript.onTouchEvent(event);
+        mDetector.onTouchEvent(event);
+        mScript.onTouchEvent(event);
         return true;
     }
 
-	@Override
-	public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-			float velocityX, float velocityY) {
-		mScript.onSwipe(e, swipeDirection, velocityX, velocityY);
-		Log.v(TAG, "onSwipe");
-		return false;
-	}
+    @Override
+    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
+            float velocityX, float velocityY) {
+        mScript.onSwipe(e, swipeDirection, velocityX, velocityY);
+        Log.v(TAG, "onSwipe");
+        return false;
+    }
 
-	// WebView interface
-	class WebAppInterface {
-		Context mContext;
+    // WebView interface
+    class WebAppInterface {
+        Context mContext;
 
-		WebAppInterface(Context c) {
-			mContext = c;
-		}
+        WebAppInterface(Context c) {
+            mContext = c;
+        }
 
-		@JavascriptInterface
-		public void showToast(String toast) {
-	        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
-		}
+        @JavascriptInterface
+        public void showToast(String toast) {
+            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+        }
 
-		@JavascriptInterface
-		public String getValue(String key) {
-			return mScript.getValue(key);
-		}
+        @JavascriptInterface
+        public String getValue(String key) {
+            return mScript.getValue(key);
+        }
 
-		@JavascriptInterface
-		public void setValue(String key, String value) {
-			mScript.setValue(key, value);
-		}
+        @JavascriptInterface
+        public void setValue(String key, String value) {
+            mScript.setValue(key, value);
+        }
 
-		@JavascriptInterface
-		public void setBackgroundColor(String color) {
-			mScript.setBackgroundColor(color);
-		}
+        @JavascriptInterface
+        public void setBackgroundColor(String color) {
+            mScript.setBackgroundColor(color);
+        }
 
-		@JavascriptInterface
-		public void setBackgroundImage(String imageUrl) {
-			mScript.setBackgroundImage(imageUrl);
-		}
+        @JavascriptInterface
+        public void setBackgroundImage(String imageUrl) {
+            mScript.setBackgroundImage(imageUrl);
+        }
 
-		@JavascriptInterface
-		public void rotateObject(String name, float angle, float x, float y, float z) {
-			mScript.rotateObject(name, angle, x,y,z);
-		}
+        @JavascriptInterface
+        public void rotateObject(String name, float angle, float x, float y, float z) {
+            mScript.rotateObject(name, angle, x,y,z);
+        }
 
-		public void rotationObject(String name, float w, float x, float y, float z) {
-			mScript.rotationObject(name, w,x,y,z);
-		}
+        public void rotationObject(String name, float w, float x, float y, float z) {
+            mScript.rotationObject(name, w,x,y,z);
+        }
 
-		@JavascriptInterface
-		public void moveObject(String name, float x, float y, float z) {
-			mScript.moveObject(name, x,y,z);
-		}
+        @JavascriptInterface
+        public void moveObject(String name, float x, float y, float z) {
+            mScript.moveObject(name, x,y,z);
+        }
 
-		@JavascriptInterface
-		public void translateObject(String name, float x, float y, float z) {
-			mScript.translateObject(name, x,y,z);
-		}
+        @JavascriptInterface
+        public void translateObject(String name, float x, float y, float z) {
+            mScript.translateObject(name, x,y,z);
+        }
 
-		@JavascriptInterface
-		public void scaleObject(String name, float x, float y, float z) {
-			mScript.scaleObject(name, x,y,z);
-		}
+        @JavascriptInterface
+        public void scaleObject(String name, float x, float y, float z) {
+            mScript.scaleObject(name, x,y,z);
+        }
 
-		@JavascriptInterface
-		public void createObject(String name, String type) {
-			mScript.createNewObject(name, type);
-		}
-	}
+        @JavascriptInterface
+        public void createObject(String name, String type) {
+            mScript.createNewObject(name, type);
+        }
+    }
 
 }

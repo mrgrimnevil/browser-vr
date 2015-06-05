@@ -32,7 +32,7 @@ public class BrowserScript extends GVRScript {
 
     private static final String TAG = "BrowserScript";
 
-	private GVRAnimationEngine mAnimationEngine;
+    private GVRAnimationEngine mAnimationEngine;
 
     private MainActivity mActivity;
     private GVRContext mContext;
@@ -40,7 +40,7 @@ public class BrowserScript extends GVRScript {
     private GVRScene mScene;
     private GVRCameraRig mRig;
 
-	private List<GVRPicker.GVRPickedObject> pickedObjects;
+    private List<GVRPicker.GVRPickedObject> pickedObjects;
 
     private GVRSceneObject mContainer;
 
@@ -57,9 +57,9 @@ public class BrowserScript extends GVRScript {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-    	mContext = gvrContext;
+        mContext = gvrContext;
 
-		mAnimationEngine = gvrContext.getAnimationEngine();
+        mAnimationEngine = gvrContext.getAnimationEngine();
 
         mScene = gvrContext.getNextMainScene();
         mRig = mScene.getMainCameraRig();
@@ -89,22 +89,22 @@ public class BrowserScript extends GVRScript {
 
     // make a scene object of type
     public GVRSceneObject createObject(String name, String type) {
-		GVRTexture texture = mContext.loadTexture(
-				new GVRAndroidResource(mContext, R.raw.earthmap1k ));
+        GVRTexture texture = mContext.loadTexture(
+                new GVRAndroidResource(mContext, R.raw.earthmap1k ));
 
         GVRSceneObject obj;
         if (type == "cube")
-        	obj = new GVRCubeSceneObject(mContext);
+            obj = new GVRCubeSceneObject(mContext);
         else if (type == "sphere")
-        	obj = new GVRSphereSceneObject(mContext);
+            obj = new GVRSphereSceneObject(mContext);
         else // default : plane
-        	obj = new GVRSceneObject(mContext);
+            obj = new GVRSceneObject(mContext);
 
         obj.setName(name);
 
-		GVRMaterial material = new GVRMaterial(mContext);
-		material.setMainTexture(texture);
-		obj.getRenderData().setMaterial(material);
+        GVRMaterial material = new GVRMaterial(mContext);
+        material.setMainTexture(texture);
+        obj.getRenderData().setMaterial(material);
 
         objects.put(name, obj);
 
@@ -112,53 +112,53 @@ public class BrowserScript extends GVRScript {
     }
 
     public void rotateObject(String name, float angle, float x, float y, float z) {
-    	GVRSceneObject obj = objects.get(name);
-    	if (obj == null)
-    		return;
+        GVRSceneObject obj = objects.get(name);
+        if (obj == null)
+            return;
 
-    	obj.getTransform().setRotationByAxis(angle, x,y,z);
+        obj.getTransform().setRotationByAxis(angle, x,y,z);
     }
 
     public void rotationObject(String name, float w, float x, float y, float z) {
-    	GVRSceneObject obj = objects.get(name);
-    	if (obj == null)
-    		return;
+        GVRSceneObject obj = objects.get(name);
+        if (obj == null)
+            return;
 
-    	obj.getTransform().setRotation(w, x, y, z);
+        obj.getTransform().setRotation(w, x, y, z);
     }
 
     public void moveObject(String name, float x, float y, float z) {
-    	GVRSceneObject obj = objects.get(name);
-    	if (obj == null)
-    		return;
+        GVRSceneObject obj = objects.get(name);
+        if (obj == null)
+            return;
 
-    	obj.getTransform().setPosition(x, y, z);
+        obj.getTransform().setPosition(x, y, z);
     }
 
     public void translateObject(String name, float x, float y, float z) {
-    	GVRSceneObject obj = objects.get(name);
-    	if (obj == null)
-    		return;
+        GVRSceneObject obj = objects.get(name);
+        if (obj == null)
+            return;
 
-    	obj.getTransform().translate(x, y, z);
+        obj.getTransform().translate(x, y, z);
     }
 
     public void scaleObject(String name, float x, float y, float z) {
-    	GVRSceneObject obj = objects.get(name);
-    	if (obj == null)
-    		return;
+        GVRSceneObject obj = objects.get(name);
+        if (obj == null)
+            return;
 
-    	obj.getTransform().setScale(x, y, z);
+        obj.getTransform().setScale(x, y, z);
     }
 
     public void setBackgroundColor(String colorStr) {
-    	try {
-    		int color = Color.parseColor(colorStr);
+        try {
+            int color = Color.parseColor(colorStr);
             mRig.getLeftCamera().setBackgroundColor(color);
             mRig.getRightCamera().setBackgroundColor(color);
-    	} catch (IllegalArgumentException e) {
-    		Log.w(TAG, "Exception : " + e);
-    	}
+        } catch (IllegalArgumentException e) {
+            Log.w(TAG, "Exception : " + e);
+        }
     }
 
     public void setBackgroundImage(String imageUrl) {
@@ -166,37 +166,37 @@ public class BrowserScript extends GVRScript {
     }
 
     public String getValue(String key) {
-    	return dict.get(key);
+        return dict.get(key);
     }
 
     public void setValue(String key, String value) {
-    	dict.put(key, value);
+        dict.put(key, value);
     }
 
     @Override
     public void onStep() {
-    	processTaskQueue();
+        processTaskQueue();
 
-		pickedObjects = GVRPicker.findObjects(mScene, 0f,0f,0f, 0f,0f,-1f);
+        pickedObjects = GVRPicker.findObjects(mScene, 0f,0f,0f, 0f,0f,-1f);
 
-		for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
+        for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
 
-		}
+        }
     }
 
     public void processTaskQueue() {
-    	if (taskQueue.size() != 0) {
-    		String task = taskQueue.poll();
+        if (taskQueue.size() != 0) {
+            String task = taskQueue.poll();
 
-    		String[] pieces = task.split(":");
-    		if (pieces.length == 2) {
-    			String name = pieces[0];
-    			String type = pieces[1];
+            String[] pieces = task.split(":");
+            if (pieces.length == 2) {
+                String name = pieces[0];
+                String type = pieces[1];
 
-    			if (type.equals("cube")) // temp
-    				create(name, "cube");
-    		}
-    	}
+                if (type.equals("cube")) // temp
+                    create(name, "cube");
+            }
+        }
     }
 
     public void onPause() {
@@ -212,30 +212,30 @@ public class BrowserScript extends GVRScript {
     }
 
     public void createNewObject(String name, String type) {
-    	taskQueue.add(name+":"+type);
+        taskQueue.add(name+":"+type);
     }
 
     public void create(String name, String type) {
 
-    	class CreateTask implements Runnable {
-    		final String name;
-    		final String type;
-    		public CreateTask(String _name, String _type) {
-    			this.name = _name;
-    			this.type = _type;
-    		}
+        class CreateTask implements Runnable {
+            final String name;
+            final String type;
+            public CreateTask(String _name, String _type) {
+                this.name = _name;
+                this.type = _type;
+            }
 
-    		@Override
-			public void run() {
-        		GVRSceneObject obj = createObject(this.name, this.type);
+            @Override
+            public void run() {
+                GVRSceneObject obj = createObject(this.name, this.type);
 
                 mContainer.addChildObject(obj);
-    		}
-    	}
+            }
+        }
 
-    	CreateTask ct = new CreateTask(name, type);
+        CreateTask ct = new CreateTask(name, type);
 
-    	mContext.runOnGlThread(ct);
+        mContext.runOnGlThread(ct);
     }
 
     public void onSingleTap(MotionEvent event) {
@@ -254,9 +254,9 @@ public class BrowserScript extends GVRScript {
 
     }
 
-	public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-			float velocityX, float velocityY) {
-		return true;
-	}
+    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
+            float velocityX, float velocityY) {
+        return true;
+    }
 
 }
