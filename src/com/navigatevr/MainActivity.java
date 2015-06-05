@@ -80,13 +80,13 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
             }
         });
 
-        webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+        webView.addJavascriptInterface(new WebAppInterface(this), "NAVI");
 
     }
 
 
     WebView getWebView() {
-        return webView;
+        return webView; 
     }
 
     void loadUrl(String url) {
@@ -173,6 +173,16 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 		}
 
 		@JavascriptInterface
+		public String getValue(String key) {
+			return mScript.getValue(key);
+		}
+
+		@JavascriptInterface
+		public void setValue(String key, String value) {
+			mScript.setValue(key, value);
+		}
+
+		@JavascriptInterface
 		public void setBackgroundColor(String color) {
 			mScript.setBackgroundColor(color);
 		}
@@ -185,6 +195,10 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 		@JavascriptInterface
 		public void rotateObject(String name, float angle, float x, float y, float z) {
 			mScript.rotateObject(name, angle, x,y,z);
+		}
+
+		public void rotationObject(String name, float w, float x, float y, float z) {
+			mScript.rotationObject(name, w,x,y,z);
 		}
 
 		@JavascriptInterface
@@ -203,8 +217,8 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 		}
 
 		@JavascriptInterface
-		public void createObject(String type, String name) {
-			mScript.createObject(type, name);
+		public void createObject(String name, String type) {
+			mScript.createNewObject(name, type);
 		}
 	}
 

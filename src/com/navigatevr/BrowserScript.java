@@ -3,6 +3,8 @@ package com.navigatevr;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
@@ -45,6 +47,9 @@ public class BrowserScript extends GVRScript {
     private GVRWebViewSceneObject webViewObject;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
+    private Map<String, String> dict = new HashMap<String, String>();
+
+    private Queue<String> taskQueue = new ArrayBlockingQueue<String>(16);
 
     BrowserScript(MainActivity activity) {
         mActivity = activity;
@@ -83,7 +88,7 @@ public class BrowserScript extends GVRScript {
     }
 
     // make a scene object of type
-    public GVRSceneObject createObject(String type, String name) {
+    public GVRSceneObject createObject(String name, String type) {
 		GVRTexture texture = mContext.loadTexture(
 				new GVRAndroidResource(mContext, R.raw.earthmap1k ));
 
@@ -106,13 +111,20 @@ public class BrowserScript extends GVRScript {
         return obj;
     }
 
-    float[] yAxis = { 0f, 1f, 0f };
     public void rotateObject(String name, float angle, float x, float y, float z) {
     	GVRSceneObject obj = objects.get(name);
     	if (obj == null)
     		return;
 
     	obj.getTransform().setRotationByAxis(angle, x,y,z);
+    }
+
+    public void rotationObject(String name, float w, float x, float y, float z) {
+    	GVRSceneObject obj = objects.get(name);
+    	if (obj == null)
+    		return;
+
+    	obj.getTransform().setRotation(w, x, y, z);
     }
 
     public void moveObject(String name, float x, float y, float z) {
@@ -153,13 +165,38 @@ public class BrowserScript extends GVRScript {
 
     }
 
+    public String getValue(String key) {
+    	return dict.get(key);
+    }
+
+    public void setValue(String key, String value) {
+    	dict.put(key, value);
+    }
+
     @Override
     public void onStep() {
+    	processTaskQueue();
+
 		pickedObjects = GVRPicker.findObjects(mScene, 0f,0f,0f, 0f,0f,-1f);
 
 		for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
 
 		}
+    }
+
+    public void processTaskQueue() {
+    	if (taskQueue.size() != 0) {
+    		String task = taskQueue.poll();
+
+    		String[] pieces = task.split(":");
+    		if (pieces.length == 2) {
+    			String name = pieces[0];
+    			String type = pieces[1];
+
+    			if (type.equals("cube")) // temp
+    				create(name, "cube");
+    		}
+    	}
     }
 
     public void onPause() {
@@ -174,22 +211,35 @@ public class BrowserScript extends GVRScript {
 
     }
 
-    // temp
-    String objType = "cube";
-    float yPos = 0f;
+    public void createNewObject(String name, String type) {
+    	taskQueue.add(name+":"+type);
+    }
 
-    public void onSingleTap(MotionEvent event) {
-    	mContext.runOnGlThread(new Runnable() {
+    public void create(String name, String type) {
+
+    	class CreateTask implements Runnable {
+    		final String name;
+    		final String type;
+    		public CreateTask(String _name, String _type) {
+    			this.name = _name;
+    			this.type = _type;
+    		}
+
     		@Override
 			public void run() {
-        		GVRSceneObject obj = createObject(objType, "cube");
+        		GVRSceneObject obj = createObject(this.name, this.type);
 
-                obj.getTransform().setPosition(2f, yPos, -2.0f);
                 mContainer.addChildObject(obj);
-
-                yPos += 2f;
     		}
-    	});
+    	}
+
+    	CreateTask ct = new CreateTask(name, type);
+
+    	mContext.runOnGlThread(ct);
+    }
+
+    public void onSingleTap(MotionEvent event) {
+
     }
 
     public void onButtonDown() {

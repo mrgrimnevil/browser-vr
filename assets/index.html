@@ -18,7 +18,11 @@ var dt = 0;
 
 setTimeout(function(){
 
-    Android.showToast("hello, world.");
+    //NAVI.showToast("hello, world.");
+    
+    NAVI.setValue("rate", "5");
+    
+    NAVI.createObject("cube-obj", "cube");
 
 }, 10*1000);
 
@@ -28,17 +32,27 @@ setTimeout(function(){
 
 }, 15*1000);
 
+setTimeout(function(){
+
+    NAVI.setBackgroundColor("#883399");
+
+}, 20*1000);
+
 var angle = 0.0;
+var yPos = 0;
 var axis = [0,1,0];
 function step() {
     requestAnimationFrame(step);
     
-    if (frame++ % 2)
+    if (frame++ % 2) // 30fps
         return;
        
-    Android.rotateObject("cube", angle, axis[0], axis[1], axis[2]);
+    NAVI.rotateObject("cube-obj", angle, axis[0], axis[1], axis[2]);
 
-    angle += 5.0;
+    NAVI.moveObject("cube-obj", 2, yPos, -2);
+
+    yPos += 0.01;
+    angle += parseFloat( NAVI.getValue("rate") );
 
     dt = Date.now() - time;
     time = Date.now();
