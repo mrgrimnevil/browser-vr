@@ -7,6 +7,8 @@ import org.gearvrf.GVRTexture;
 
 public class Cursor {
 
+    private static final String TAG = "Cursor";
+
     private GVRSceneObject sceneObject;
     private float distance = 3f;
 

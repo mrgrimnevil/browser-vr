@@ -55,9 +55,10 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     @SuppressLint("SetJavaScriptEnabled")
     private void createWebView() {
         webView = new WebView(this);
+
         webView.setInitialScale(100);
 
-        int width = 1000, height = 1000;
+        int width = 1024, height = 1024;
 
         webView.measure(width, height);
         webView.layout(0, 0, width, height);

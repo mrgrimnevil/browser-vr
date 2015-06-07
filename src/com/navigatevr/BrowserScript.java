@@ -44,7 +44,8 @@ public class BrowserScript extends GVRScript {
     private GVRSceneObject mContainer;
 
     private Cursor mCursor;
-    private NaviWebViewSceneObject webViewObject;
+
+    private Browser browser;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
     private Map<String, String> dict = new HashMap<String, String>();
@@ -74,20 +75,23 @@ public class BrowserScript extends GVRScript {
         mCursor = new Cursor(mContext);
         mRig.getOwnerObject().addChildObject(mCursor.getSceneObject());
 
-        webViewObject = createWebViewObject(gvrContext);
-        webViewObject.getTransform().setPosition(0f, 0f, -3.0f);
-        mContainer.addChildObject(webViewObject);
+        WebView webView = mActivity.getWebView();
+        browser = new Browser(mContext, webView);
+
+        //webViewObject = createWebViewObject(gvrContext);
+        browser.getSceneObject().getTransform().setPosition(0f, 0f, -3.0f);
+        mContainer.addChildObject( browser.getSceneObject() );
         //webViewObject.pauseRender();
     }
 
-    private NaviWebViewSceneObject createWebViewObject(GVRContext gvrContext) {
+    /*private NaviWebViewSceneObject createWebViewObject(GVRContext gvrContext) {
         WebView webView = mActivity.getWebView();
         NaviWebViewSceneObject webObject = new NaviWebViewSceneObject(gvrContext,
                 3.0f, 3.0f, webView);
         webObject.setName("webview-1");
 
         return webObject;
-    }
+    }*/
 
     // make a scene object of type
     public GVRSceneObject createObject(String name, String type) {
