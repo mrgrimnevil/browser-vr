@@ -22,6 +22,7 @@ import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.webkit.WebView;
@@ -49,7 +50,6 @@ public class BrowserScript extends GVRScript {
 
     private Browser browser;
 
-    private EditTextSceneObject sceneObject;
     private EditText editText;
     private boolean activated = false;
 
@@ -81,30 +81,23 @@ public class BrowserScript extends GVRScript {
         mCursor = new Cursor(mContext);
         mRig.getOwnerObject().addChildObject(mCursor.getSceneObject());
 
-        WebView webView = mActivity.getWebView();
-        browser = new Browser(mContext, webView);
-
-        browser.getSceneObject().getTransform().setPosition(0f, 0f, -3.0f);
-        mContainer.addChildObject( browser.getSceneObject() );
-        //webViewObject.pauseRender();
-
-
-        // text navigation bar (move into Browser)
-        sceneObject = new EditTextSceneObject(mContext, mActivity,
-                2f, 2f, 1024, 1024, "");
-
-        editText = sceneObject.getTextView();
-        editText.setHint("Enter some text:");
-
-        sceneObject.setBackgroundColor(Color.WHITE);
-        sceneObject.setTextSize(20);
-        sceneObject.setTextColor(Color.BLACK);
-
-        sceneObject.getTransform().setPosition(3f, 0f, -3f);
-
-        mContainer.addChildObject(sceneObject);
+        createBrowser();
     }
 
+    public void createBrowser() {
+        float width = 2f;
+        float height = 2f;
+
+        WebView webView = mActivity.getWebView();
+        browser = new Browser(mContext, mActivity, width, height, webView);
+
+        editText = browser.getEditText();
+
+        browser.getSceneObject().getTransform().setPosition(0f, 0f, -3f);
+        //webViewObject.pauseRender();
+
+        mContainer.addChildObject( browser.getSceneObject() );
+    }
 
 
     // make a scene object of type
@@ -230,6 +223,16 @@ public class BrowserScript extends GVRScript {
             activated = true;
         }
 
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            String navText = editText.getText().toString();
+
+            if ( Patterns.WEB_URL.matcher(navText).matches() ) {
+                browser.getWebView().loadUrl(navText);
+            }
+
+            return;
+        }
+
         editText.dispatchKeyEvent(event);
     }
 
@@ -238,6 +241,10 @@ public class BrowserScript extends GVRScript {
             editText.setActivated(true);
             editText.requestFocus();
             activated = true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_ENTER) {
+            return;
         }
 
         editText.dispatchKeyEvent(event);
@@ -256,6 +263,10 @@ public class BrowserScript extends GVRScript {
                 MotionEvent.ACTION_DOWN, x, y, 0));
         webView.dispatchTouchEvent(MotionEvent.obtain(uMillis, uMillis,
                 MotionEvent.ACTION_UP, x, y, 0));
+    }
+
+    public void scroll(float direction, float velocity) {
+
     }
 
     public void refreshWebView() {
