@@ -20,10 +20,12 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.webkit.WebView;
+import android.widget.EditText;
 
 import com.oculus.VRTouchPadGestureDetector.SwipeDirection;
 
@@ -46,6 +48,10 @@ public class BrowserScript extends GVRScript {
     private Cursor mCursor;
 
     private Browser browser;
+
+    private EditTextSceneObject sceneObject;
+    private EditText editText;
+    private boolean activated = false;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
     private Map<String, String> dict = new HashMap<String, String>();
@@ -78,20 +84,28 @@ public class BrowserScript extends GVRScript {
         WebView webView = mActivity.getWebView();
         browser = new Browser(mContext, webView);
 
-        //webViewObject = createWebViewObject(gvrContext);
         browser.getSceneObject().getTransform().setPosition(0f, 0f, -3.0f);
         mContainer.addChildObject( browser.getSceneObject() );
         //webViewObject.pauseRender();
+
+
+        // text navigation bar (move into Browser)
+        sceneObject = new EditTextSceneObject(mContext, mActivity,
+                2f, 2f, 1024, 1024, "");
+
+        editText = sceneObject.getTextView();
+        editText.setHint("Enter some text:");
+
+        sceneObject.setBackgroundColor(Color.WHITE);
+        sceneObject.setTextSize(20);
+        sceneObject.setTextColor(Color.BLACK);
+
+        sceneObject.getTransform().setPosition(3f, 0f, -3f);
+
+        mContainer.addChildObject(sceneObject);
     }
 
-    /*private NaviWebViewSceneObject createWebViewObject(GVRContext gvrContext) {
-        WebView webView = mActivity.getWebView();
-        NaviWebViewSceneObject webObject = new NaviWebViewSceneObject(gvrContext,
-                3.0f, 3.0f, webView);
-        webObject.setName("webview-1");
 
-        return webObject;
-    }*/
 
     // make a scene object of type
     public GVRSceneObject createObject(String name, String type) {
@@ -106,7 +120,7 @@ public class BrowserScript extends GVRScript {
         else // default : plane
             obj = new GVRSceneObject(mContext);
 
-        obj.setName(name);
+        //obj.setName(name);
 
         GVRMaterial material = new GVRMaterial(mContext);
         material.setMainTexture(texture);
@@ -210,15 +224,42 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onKeyDown(int keyCode, KeyEvent event) {
+        if (!activated) {
+            editText.setActivated(true);
+            editText.requestFocus();
+            activated = true;
+        }
 
+        editText.dispatchKeyEvent(event);
     }
 
     public void onKeyUp(int keyCode, KeyEvent event) {
+        if (!activated) {
+            editText.setActivated(true);
+            editText.requestFocus();
+            activated = true;
+        }
 
+        editText.dispatchKeyEvent(event);
+    }
+
+    public void click() {
+        WebView webView = browser.getWebView();
+
+        final long uMillis = SystemClock.uptimeMillis();
+
+        // TODO: obtain from hit position
+        float x = 100;
+        float y = 100;
+
+        webView.dispatchTouchEvent(MotionEvent.obtain(uMillis, uMillis,
+                MotionEvent.ACTION_DOWN, x, y, 0));
+        webView.dispatchTouchEvent(MotionEvent.obtain(uMillis, uMillis,
+                MotionEvent.ACTION_UP, x, y, 0));
     }
 
     public void refreshWebView() {
-        webViewObject.refresh();
+        browser.getWebView().reload();
     }
 
     public void createNewObject(String name, String type) {
@@ -249,7 +290,7 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onSingleTap(MotionEvent event) {
-
+        click();
     }
 
     public void onButtonDown() {
@@ -261,7 +302,6 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onTouchEvent(MotionEvent event) {
-
     }
 
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,

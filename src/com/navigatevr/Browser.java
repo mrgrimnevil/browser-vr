@@ -14,13 +14,21 @@ public class Browser {
     private GVRSceneObject sceneObject;
     private NaviWebViewSceneObject webViewObject;
 
+    private WebView webView;
+
     public Browser(GVRContext gvrContext, WebView webView) {
         sceneObject = new GVRSceneObject(gvrContext);
+
+        this.webView = webView;
 
         webViewObject = new NaviWebViewSceneObject(gvrContext, 3f, 3f, webView);
         webViewObject.setName("webview-"+ id++);
 
         sceneObject.addChildObject(webViewObject);
+    }
+
+    public WebView getWebView() {
+        return webView;
     }
 
     public GVRSceneObject getSceneObject() {
