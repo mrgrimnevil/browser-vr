@@ -9,7 +9,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -43,12 +46,14 @@ public class BrowserScript extends GVRScript {
     private GVRCameraRig mRig;
 
     private List<GVRPicker.GVRPickedObject> pickedObjects;
+    private float[] hitLocation = new float[3];
 
     private GVRSceneObject mContainer;
 
     private Cursor mCursor;
 
     private Browser browser;
+    private boolean browserFocused = false;
 
     private EditText editText;
     private boolean activated = false;
@@ -92,6 +97,9 @@ public class BrowserScript extends GVRScript {
         browser = new Browser(mContext, mActivity, width, height, webView);
 
         editText = browser.getEditText();
+
+        GVRSceneObject screenObject = browser.getScreenObject();
+        attachDefaultEyePointee(screenObject);
 
         browser.getSceneObject().getTransform().setPosition(0f, 0f, -3f);
         //webViewObject.pauseRender();
@@ -193,7 +201,22 @@ public class BrowserScript extends GVRScript {
         pickedObjects = GVRPicker.findObjects(mScene, 0f,0f,0f, 0f,0f,-1f);
 
         for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
+            GVRSceneObject obj = pickedObject.getHitObject();
 
+            if (obj instanceof NaviWebViewSceneObject) {
+                browserFocused = true;
+                hitLocation = pickedObject.getHitLocation();
+
+                String coords =
+                        String.format("%.3g%n", hitLocation[0]) + "," +
+                        String.format("%.3g%n", hitLocation[1]);
+
+                //editText.setText(coords);
+            } else {
+                browserFocused = false;
+            }
+
+            break;
         }
     }
 
@@ -227,6 +250,8 @@ public class BrowserScript extends GVRScript {
             String navText = editText.getText().toString();
 
             if ( Patterns.WEB_URL.matcher(navText).matches() ) {
+                if (!navText.toLowerCase().startsWith("http://"))
+                    navText = "http://" + navText;
                 browser.getWebView().loadUrl(navText);
             }
 
@@ -251,13 +276,20 @@ public class BrowserScript extends GVRScript {
     }
 
     public void click() {
+        if (!browserFocused)
+            return;
+
         WebView webView = browser.getWebView();
 
         final long uMillis = SystemClock.uptimeMillis();
 
-        // TODO: obtain from hit position
-        float x = 100;
-        float y = 100;
+        int width = 1024, height = 1024; // defined in MainActivity
+
+        float hitX = this.hitLocation[0];
+        float hitY = this.hitLocation[1] * -1f;
+
+        float x = (hitX + 1f) * width/2;
+        float y = (hitY + 1f) * height/2;
 
         webView.dispatchTouchEvent(MotionEvent.obtain(uMillis, uMillis,
                 MotionEvent.ACTION_DOWN, x, y, 0));
@@ -265,8 +297,12 @@ public class BrowserScript extends GVRScript {
                 MotionEvent.ACTION_UP, x, y, 0));
     }
 
-    public void scroll(float direction, float velocity) {
+    public void scroll(int direction, float velocity) {
+        WebView webView = browser.getWebView();
 
+        int dy = direction * 10;
+
+        webView.scrollBy(0, dy);
     }
 
     public void refreshWebView() {
@@ -313,11 +349,20 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onTouchEvent(MotionEvent event) {
+
     }
 
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
             float velocityX, float velocityY) {
         return true;
+    }
+
+    protected void attachDefaultEyePointee(GVRSceneObject sceneObject) {
+        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(mContext);
+        GVRMesh mesh = sceneObject.getRenderData().getMesh();
+        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(mContext, mesh);
+        eyePointeeHolder.addPointee(eyePointee);
+        sceneObject.attachEyePointeeHolder(eyePointeeHolder);
     }
 
     // for debug, hide

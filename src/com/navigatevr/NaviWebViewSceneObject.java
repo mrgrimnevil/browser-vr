@@ -48,8 +48,10 @@ GVRDrawFrameListener {
     public NaviWebViewSceneObject(GVRContext gvrContext, GVRMesh mesh,
             WebView webView) {
         super(gvrContext, mesh);
+
         mWebView = webView;
         gvrContext.registerDrawFrameListener(this);
+
         GVRTexture texture = new GVRExternalTexture(gvrContext);
         GVRMaterial material = new GVRMaterial(gvrContext, GVRShaderType.OES.ID);
         material.setMainTexture(texture);

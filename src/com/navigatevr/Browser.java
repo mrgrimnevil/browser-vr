@@ -57,6 +57,10 @@ public class Browser {
         return editText;
     }
 
+    public NaviWebViewSceneObject getScreenObject() {
+        return webViewObject;
+    }
+
     public GVRSceneObject getSceneObject() {
         return sceneObject;
     }

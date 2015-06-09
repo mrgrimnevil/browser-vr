@@ -16,6 +16,10 @@ var frame = 0;
 var time = Date.now();
 var dt = 0;
 
+document.addEventListener("click", function(event){
+    NAVI.showToast("clicked pg @ "+ event.pageX +","+ event.pageY);
+}, false);
+
 setTimeout(function(){
 
     //NAVI.showToast("hello, world.");

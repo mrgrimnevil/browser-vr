@@ -71,7 +71,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setNeedInitialFocus(false);
-        settings.setUserAgentString("Navigator/1.0");
+        //settings.setUserAgentString("Navigator/1.0");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
