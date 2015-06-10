@@ -54,6 +54,9 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
     @SuppressLint("SetJavaScriptEnabled")
     private void createWebView() {
+
+        // WebView.enableSlowWholeDocumentDraw();
+
         webView = new WebView(this);
 
         webView.setInitialScale(100);
@@ -97,7 +100,15 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     @Override
     public void onPause() {
         super.onPause();
+        webView.pauseTimers();
         mScript.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        webView.resumeTimers();
+        mScript.onResume();
     }
 
     @Override

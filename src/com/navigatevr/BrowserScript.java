@@ -115,17 +115,23 @@ public class BrowserScript extends GVRScript {
 
         mContainer.addChildObject( browser.getSceneObject() );
 
+
         // nav buttons
-        GVRTexture texture = mContext.loadTexture(
-                new GVRAndroidResource(mContext, R.raw.refresh_button ));
+        String[] buttons = { "reload", "back", "forward" };
+        int[] buttonTextures = { R.raw.refresh_button, R.raw.back_button, R.raw.forward_button };
 
-        GVRSceneObject reloadButtonObject = new GVRSceneObject(mContext, 0.3f, 0.3f, texture);
-        reloadButtonObject.setName("reload");
-        reloadButtonObject.getRenderData().getMaterial().setOpacity(DEFAULT_OPACITY);
-        attachDefaultEyePointee(reloadButtonObject);
+        for (int i = 0; i < buttons.length; i++) {
+            GVRTexture texture = mContext.loadTexture(
+                    new GVRAndroidResource(mContext, buttonTextures[i] ));
 
-        reloadButtonObject.getTransform().setPosition(-1.3f, 0f, -distance);
-        mContainer.addChildObject(reloadButtonObject);
+            GVRSceneObject buttonObject = new GVRSceneObject(mContext, 0.3f, 0.3f, texture);
+            buttonObject.setName( buttons[i] );
+            buttonObject.getRenderData().getMaterial().setOpacity(DEFAULT_OPACITY);
+            attachDefaultEyePointee(buttonObject);
+
+            buttonObject.getTransform().setPosition(-1.3f, 0.85f - 0.5f*i, -distance);
+            mContainer.addChildObject(buttonObject);
+        }
     }
 
 
@@ -276,6 +282,10 @@ public class BrowserScript extends GVRScript {
 
     }
 
+    public void onResume() {
+
+    }
+
     public void onKeyDown(int keyCode, KeyEvent event) {
         if (!activated) {
             editText.setActivated(true);
@@ -344,6 +354,28 @@ public class BrowserScript extends GVRScript {
         browser.getWebView().reload();
     }
 
+    public void navigateForward() {
+        Toast.makeText(mActivity, "forward", Toast.LENGTH_SHORT).show();
+
+        if (browser.getWebView().canGoForward())
+            browser.getWebView().goForward();
+    }
+
+    public void navigateBack() {
+        Toast.makeText(mActivity, "back", Toast.LENGTH_SHORT).show();
+
+        if (browser.getWebView().canGoBack())
+            browser.getWebView().goBack();
+    }
+
+    public void pageUp() {
+        browser.getWebView().pageUp(false);
+    }
+
+    public void pageDown() {
+        browser.getWebView().pageDown(false);
+    }
+
     public void createNewObject(String name, String type, String texture) {
         taskQueue.add(name+":"+type);
     }
@@ -379,6 +411,10 @@ public class BrowserScript extends GVRScript {
 
             if (buttonAction.equals("reload")) {
                 refreshWebView();
+            } else if (buttonAction.equals("forward")) {
+                navigateForward();
+            } else if (buttonAction.equals("back")) {
+                navigateBack();
             }
         } else {
 
