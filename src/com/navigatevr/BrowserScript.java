@@ -399,6 +399,19 @@ public class BrowserScript extends GVRScript {
 
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
             float velocityX, float velocityY) {
+
+        switch (swipeDirection) {
+            case Up:
+                scroll(-1, velocityY);
+                break;
+            case Down:
+                scroll(1, velocityY);
+                break;
+            case Forward:
+                break;
+            case Backward:
+                break;
+        }
         return true;
     }
 
