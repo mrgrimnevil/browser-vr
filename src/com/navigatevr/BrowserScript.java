@@ -30,6 +30,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.oculus.VRTouchPadGestureDetector.SwipeDirection;
 
@@ -57,6 +58,12 @@ public class BrowserScript extends GVRScript {
 
     private EditText editText;
     private boolean activated = false;
+
+    private boolean buttonFocused = false;
+    private GVRSceneObject focusedButton = null;
+
+    private float DEFAULT_OPACITY = 0.3f;
+    private float FOCUSED_OPACITY = 0.9f;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
     private Map<String, String> dict = new HashMap<String, String>();
@@ -90,6 +97,8 @@ public class BrowserScript extends GVRScript {
     }
 
     public void createBrowser() {
+        float distance = 3f;
+
         float width = 2f;
         float height = 2f;
 
@@ -101,10 +110,22 @@ public class BrowserScript extends GVRScript {
         GVRSceneObject screenObject = browser.getScreenObject();
         attachDefaultEyePointee(screenObject);
 
-        browser.getSceneObject().getTransform().setPosition(0f, 0f, -3f);
+        browser.getSceneObject().getTransform().setPosition(0f, 0f, -distance);
         //webViewObject.pauseRender();
 
         mContainer.addChildObject( browser.getSceneObject() );
+
+        // nav buttons
+        GVRTexture texture = mContext.loadTexture(
+                new GVRAndroidResource(mContext, R.raw.refresh_button ));
+
+        GVRSceneObject reloadButtonObject = new GVRSceneObject(mContext, 0.3f, 0.3f, texture);
+        reloadButtonObject.setName("reload");
+        reloadButtonObject.getRenderData().getMaterial().setOpacity(DEFAULT_OPACITY);
+        attachDefaultEyePointee(reloadButtonObject);
+
+        reloadButtonObject.getTransform().setPosition(-1.3f, 0f, -distance);
+        mContainer.addChildObject(reloadButtonObject);
     }
 
 
@@ -203,20 +224,36 @@ public class BrowserScript extends GVRScript {
         for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
             GVRSceneObject obj = pickedObject.getHitObject();
 
+            hitLocation = pickedObject.getHitLocation();
+
             if (obj instanceof NaviWebViewSceneObject) {
                 browserFocused = true;
-                hitLocation = pickedObject.getHitLocation();
+                buttonFocused = false;
 
-                String coords =
+                /*String coords =
                         String.format("%.3g%n", hitLocation[0]) + "," +
                         String.format("%.3g%n", hitLocation[1]);
 
-                //editText.setText(coords);
+                editText.setText(coords);*/
             } else {
                 browserFocused = false;
+                buttonFocused = true;
+
+                focusedButton = obj;
+
+                focusedButton.getRenderData().getMaterial().setOpacity(FOCUSED_OPACITY);
             }
 
             break;
+        }
+
+        // reset
+        if (pickedObjects.size() == 0) {
+            browserFocused = false;
+            buttonFocused = false;
+
+            if (focusedButton != null)
+                focusedButton.getRenderData().getMaterial().setOpacity(DEFAULT_OPACITY);
         }
     }
 
@@ -276,9 +313,6 @@ public class BrowserScript extends GVRScript {
     }
 
     public void click() {
-        if (!browserFocused)
-            return;
-
         WebView webView = browser.getWebView();
 
         final long uMillis = SystemClock.uptimeMillis();
@@ -306,10 +340,11 @@ public class BrowserScript extends GVRScript {
     }
 
     public void refreshWebView() {
+        Toast.makeText(mActivity, "refresh", Toast.LENGTH_SHORT).show();
         browser.getWebView().reload();
     }
 
-    public void createNewObject(String name, String type) {
+    public void createNewObject(String name, String type, String texture) {
         taskQueue.add(name+":"+type);
     }
 
@@ -337,7 +372,17 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onSingleTap(MotionEvent event) {
-        click();
+        if (browserFocused) {
+            click();
+        } else if (buttonFocused) {
+            String buttonAction = focusedButton.getName();
+
+            if (buttonAction.equals("reload")) {
+                refreshWebView();
+            }
+        } else {
+
+        }
     }
 
     public void onButtonDown() {

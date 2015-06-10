@@ -1,4 +1,10 @@
 Browser VR
 ==========
-A web browser for Gear VR
+A VR native web browser for Gear VR
+
+
+
+### Roadmap
+
+
 

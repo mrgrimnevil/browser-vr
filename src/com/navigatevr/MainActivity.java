@@ -222,8 +222,8 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
         }
 
         @JavascriptInterface
-        public void createObject(String name, String type) {
-            mScript.createNewObject(name, type);
+        public void createObject(String name, String type, String texture) {
+            mScript.createNewObject(name, type, texture);
         }
     }
 
