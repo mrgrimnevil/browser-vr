@@ -43,7 +43,9 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
         createWebView();
 
-        loadUrl("file:///android_asset/index.html");
+        String base = "file:///android_asset/web/";
+        String url = base+"index.html";
+        loadUrl(url);
 
         mScript = new BrowserScript(this);
 
@@ -84,6 +86,8 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
             }
         });
 
+        WebView.setWebContentsDebuggingEnabled(true);
+
         webView.addJavascriptInterface(new WebAppInterface(this), "NAVI");
 
     }
@@ -95,6 +99,16 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
     void loadUrl(String url) {
         webView.loadUrl(url);
+    }
+
+    void injectJS(String js) {
+        if (!js.startsWith("javascript"))
+            js = "javascript:"+js;
+        webView.loadUrl(js);
+    }
+
+    void injectScript(String jsPath) {
+        //
     }
 
     @Override

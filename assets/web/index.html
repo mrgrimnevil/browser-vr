@@ -8,8 +8,11 @@ h1 { font-size: 64px; margin: 0px; text-align: center; }
 </style>
 </head>
 <body>
+
 <h1>hello world</h1>
 <img src="gearvr_logo.jpg" width="500px" height="455px">
+
+<script d-src="navi.js"></script>
 <script>
 
 var frame = 0;
@@ -23,9 +26,9 @@ document.addEventListener("click", function(event){
 setTimeout(function(){
 
     //NAVI.showToast("hello, world.");
-    
+
     NAVI.setValue("rate", "3");
-    
+
     NAVI.createObject("cube-obj", "cube", "earthmap1k.jpg");
 
 }, 10*1000);
@@ -50,10 +53,10 @@ var x = 0;
 var y = 0;
 function step() {
     requestAnimationFrame(step);
-    
+
     if (frame++ % 2) // 30fps
         return;
-       
+
     NAVI.rotateObject("cube-obj", angle, axis[0], axis[1], axis[2]);
 
     angle += parseFloat( NAVI.getValue("rate") );
@@ -61,12 +64,13 @@ function step() {
     NAVI.moveObject("cube-obj", x, 0, y);
     x = Math.cos(frame/60) * radius;
     y = Math.sin(frame/60) * radius;
-    
+
 
     dt = Date.now() - time;
     time = Date.now();
 }
 
 </script>
+
 </body>
 </html>

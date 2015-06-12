@@ -351,6 +351,7 @@ public class BrowserScript extends GVRScript {
 
     public void refreshWebView() {
         Toast.makeText(mActivity, "refresh", Toast.LENGTH_SHORT).show();
+
         browser.getWebView().reload();
     }
 
