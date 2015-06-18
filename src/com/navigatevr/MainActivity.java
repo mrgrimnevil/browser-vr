@@ -1,5 +1,7 @@
 package com.navigatevr;
 
+import java.util.UUID;
+
 import org.gearvrf.GVRActivity;
 
 import android.annotation.SuppressLint;
@@ -194,10 +196,16 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
         }
 
         @JavascriptInterface
+        public String getUUID() {
+            return UUID.randomUUID().toString();
+        }
+
+        @JavascriptInterface
         public void showToast(String toast) {
             Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
         }
 
+        @JavascriptInterface
         public void refreshWebView() {
             mScript.refreshWebView();
         }

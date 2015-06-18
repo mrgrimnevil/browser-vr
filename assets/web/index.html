@@ -19,6 +19,8 @@ var frame = 0;
 var time = Date.now();
 var dt = 0;
 
+var cube = null;
+
 document.addEventListener("click", function(event){
     NAVI.showToast("clicked pg @ "+ event.pageX +","+ event.pageY);
 }, false);
@@ -27,7 +29,7 @@ setTimeout(function(){
 
     NAVI.setValue("rate", "3");
 
-    NAVI.createObject("cube-obj", "cube");
+    cube = new NAVI.Object3D("cube-obj", "cube");
 
 }, 5*1000);
 
@@ -55,11 +57,11 @@ function step() {
     if (frame++ % 2) // 30fps
         return;
 
-    NAVI.rotateObject("cube-obj", angle, axis[0], axis[1], axis[2]);
+    cube.rotate(angle, axis[0], axis[1], axis[2]);
 
     angle += parseFloat( NAVI.getValue("rate") );
 
-    NAVI.moveObject("cube-obj", x, 0, y);
+    cube.setPosition(x, 0, y);
     x = Math.cos(frame/60) * radius;
     y = Math.sin(frame/60) * radius;
 
