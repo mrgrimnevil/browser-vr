@@ -36,7 +36,7 @@ var NAVI = {
 	},
 
 	moveObject: function(name, x,y,z) {
-		return _NAVI.moveObject(name, type);
+		return _NAVI.moveObject(name, x,y,z);
 	},
 
 	translateObject: function(name, x,y,z) {
@@ -47,24 +47,24 @@ var NAVI = {
 		return _NAVI.scaleObject(name, x,y,z);
 	},
 
-	rotateObject: function(name, x,y,z) {
-		return _NAVI.rotateObject(name, x,y,z);
+	rotateObject: function(name, angle, x,y,z) {
+		return _NAVI.rotateObject(name, angle, x,y,z);
 	},
 
 	rotationObject: function(name, w,x,y,z) {
 		return _NAVI.rotationObject(name, w,x,y,z);
 	}
 
+};
 
-	/* util */
-	util: {
-		isColorString: function(string) {
-			return (string[0] == '#');
-		}
 
-		isUrl: function(string) {
-			return true;
-		}
+/* util */
+NAVI.util = {
+	isColorString: function(string) {
+		return (string[0] == '#');
+	},
+
+	isUrl: function(string) {
+		return true;
 	}
-
 };

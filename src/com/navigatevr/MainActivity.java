@@ -88,7 +88,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
         WebView.setWebContentsDebuggingEnabled(true);
 
-        webView.addJavascriptInterface(new WebAppInterface(this), "NAVI");
+        webView.addJavascriptInterface(new WebAppInterface(this), "_NAVI");
 
     }
 
@@ -247,8 +247,8 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
         }
 
         @JavascriptInterface
-        public void createObject(String name, String type, String texture) {
-            mScript.createNewObject(name, type, texture);
+        public void createObject(String name, String type) {
+            mScript.createNewObject(name, type);
         }
     }
 

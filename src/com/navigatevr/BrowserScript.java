@@ -377,7 +377,7 @@ public class BrowserScript extends GVRScript {
         browser.getWebView().pageDown(false);
     }
 
-    public void createNewObject(String name, String type, String texture) {
+    public void createNewObject(String name, String type) {
         taskQueue.add(name+":"+type);
     }
 
