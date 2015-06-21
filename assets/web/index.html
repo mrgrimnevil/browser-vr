@@ -5,11 +5,20 @@
 <style>
 body { font-family: sans-serif; }
 h1 { font-size: 64px; margin: 0px; text-align: center; }
+.bg { width: 200px; height: 200px; margin: 10px; float: left; color: white; padding: 10px; text-align: center; font-size: 32px; }
+textarea { width: 600px; font-size: 24px; border: 3px solid black; padding: 10px; }
 </style>
 </head>
 <body>
 
 <h1>hello world</h1>
+
+<div class="bg" style="background-color: red">RED</div>
+<div class="bg" style="background-color: green">GREEN</div>
+<div class="bg" style="background-color: blue">BLUE</div>
+
+<textarea id="textarea"></textarea>
+
 <img src="gearvr_logo.jpg" width="500px" height="455px">
 
 <script src="navi.js"></script>
@@ -21,9 +30,23 @@ var dt = 0;
 
 var cube = null;
 
-document.addEventListener("click", function(event){
+document.addEventListener("click", function(event) {
     NAVI.showToast("clicked pg @ "+ event.pageX +","+ event.pageY);
 }, false);
+
+document.addEventListener("keydown", function(event) {
+    var code = event.keyCode || event.which;
+    NAVI.showToast("keydown " + code);
+});
+
+var bgButtons = document.getElementsByClassName("bg");
+
+for (var i = 0; i < bgButtons.length; i++) {
+    bgButtons[i].addEventListener("click", function(event) {
+        NAVI.setBackgroundColor( event.target.style.backgroundColor );
+        event.stopPropagation();
+    });
+}
 
 setTimeout(function(){
 
@@ -36,12 +59,6 @@ setTimeout(function(){
 setTimeout(function(){
 
     step();
-
-}, 15*1000);
-
-setTimeout(function(){
-
-    NAVI.setBackgroundColor("#883399");
 
 }, 10*1000);
 

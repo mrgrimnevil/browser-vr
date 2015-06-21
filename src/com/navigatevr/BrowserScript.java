@@ -54,7 +54,7 @@ public class BrowserScript extends GVRScript {
     private Cursor mCursor;
 
     private Browser browser;
-    private boolean browserFocused = false;
+    private boolean browserFocused = true;
 
     private EditText editText;
     private boolean activated = false;
@@ -97,7 +97,7 @@ public class BrowserScript extends GVRScript {
     }
 
     public void createBrowser() {
-        float distance = 3f;
+        float distance = 2.5f;
 
         float width = 2f;
         float height = 2f;
@@ -287,6 +287,12 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onKeyDown(int keyCode, KeyEvent event) {
+        if (browserFocused) {
+            WebView webView = browser.getWebView();
+            webView.dispatchKeyEvent(event);
+            return;
+        }
+
         if (!activated) {
             editText.setActivated(true);
             editText.requestFocus();
@@ -309,6 +315,12 @@ public class BrowserScript extends GVRScript {
     }
 
     public void onKeyUp(int keyCode, KeyEvent event) {
+        if (browserFocused) {
+            WebView webView = browser.getWebView();
+            webView.dispatchKeyEvent(event);
+            return;
+        }
+
         if (!activated) {
             editText.setActivated(true);
             editText.requestFocus();
