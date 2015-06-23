@@ -1,5 +1,6 @@
 package com.navigatevr;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +60,9 @@ public class BrowserScript extends GVRScript {
     private EditText editText;
     private boolean activated = false;
 
+    private List<Button> uiButtons = new ArrayList<Button>();
+    private Button focusedButton = null;
     private boolean buttonFocused = false;
-    private GVRSceneObject focusedButton = null;
-
-    private float DEFAULT_OPACITY = 0.3f;
-    private float FOCUSED_OPACITY = 0.9f;
 
     private Map<String, GVRSceneObject> objects = new HashMap<String, GVRSceneObject>();
     private Map<String, String> dict = new HashMap<String, String>();
@@ -115,22 +114,25 @@ public class BrowserScript extends GVRScript {
 
         mContainer.addChildObject( browser.getSceneObject() );
 
+        // TODO: add buttons to container
+        GVRSceneObject uiContainerObject = new GVRSceneObject(mContext);
+        uiContainerObject.getTransform().setPosition(-1.3f, 0f, -distance);
+        mContainer.addChildObject(uiContainerObject);
 
         // nav buttons
         String[] buttons = { "reload", "back", "forward" };
         int[] buttonTextures = { R.raw.refresh_button, R.raw.back_button, R.raw.forward_button };
 
         for (int i = 0; i < buttons.length; i++) {
-            GVRTexture texture = mContext.loadTexture(
-                    new GVRAndroidResource(mContext, buttonTextures[i] ));
+            Button button = new Button(mContext, buttons[i], buttonTextures[i]);
+            uiButtons.add(button);
 
-            GVRSceneObject buttonObject = new GVRSceneObject(mContext, 0.3f, 0.3f, texture);
-            buttonObject.setName( buttons[i] );
-            buttonObject.getRenderData().getMaterial().setOpacity(DEFAULT_OPACITY);
+            GVRSceneObject buttonObject = button.getSceneObject();
             attachDefaultEyePointee(buttonObject);
 
-            buttonObject.getTransform().setPosition(-1.3f, 0.85f - 0.5f*i, -distance);
-            mContainer.addChildObject(buttonObject);
+            buttonObject.getTransform().setPositionY(0.85f - 0.5f*i);
+
+            uiContainerObject.addChildObject(buttonObject);
         }
     }
 
@@ -241,13 +243,18 @@ public class BrowserScript extends GVRScript {
                         String.format("%.3g%n", hitLocation[1]);
 
                 editText.setText(coords);*/
-            } else {
+            } else { // NOTE: buttons only for now
+
                 browserFocused = false;
                 buttonFocused = true;
 
-                focusedButton = obj;
-
-                focusedButton.getRenderData().getMaterial().setOpacity(FOCUSED_OPACITY);
+                for (int i = 0; i < uiButtons.size(); i++) {
+                    Button button = uiButtons.get(i);
+                    if ( button.name.equals( obj.getName() ) ) {
+                        focusedButton = button;
+                        button.setFocus(true);
+                    }
+                }
             }
 
             break;
@@ -259,7 +266,7 @@ public class BrowserScript extends GVRScript {
             buttonFocused = false;
 
             if (focusedButton != null)
-                focusedButton.getRenderData().getMaterial().setOpacity(DEFAULT_OPACITY);
+                focusedButton.setFocus(false);
         }
     }
 
@@ -420,7 +427,7 @@ public class BrowserScript extends GVRScript {
         if (browserFocused) {
             click();
         } else if (buttonFocused) {
-            String buttonAction = focusedButton.getName();
+            String buttonAction = focusedButton.name;
 
             if (buttonAction.equals("reload")) {
                 refreshWebView();
