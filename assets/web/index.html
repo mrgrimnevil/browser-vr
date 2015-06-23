@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>index</title>
+    <meta charset="utf-8">
+    <meta name="vr-background" content="#6699ff">
+    <title>index</title>
 <style>
 body { font-family: sans-serif; }
 h1 { font-size: 64px; margin: 0px; text-align: center; }
@@ -47,6 +49,24 @@ for (var i = 0; i < bgButtons.length; i++) {
         event.stopPropagation();
     });
 }
+
+function processMeta() {
+    var metas = document.getElementsByTagName("meta");
+
+    for (i = 0; i < metas.length; i++) {
+        var meta = metas[i];
+        var name = meta.getAttribute("name");
+
+        if (name === "vr-background") {
+            var content = meta.getAttribute("content");
+            NAVI.setBackgroundColor( content );
+        }
+    }
+}
+
+setTimeout(function(){
+    processMeta();
+}, 3000);
 
 setTimeout(function(){
 
