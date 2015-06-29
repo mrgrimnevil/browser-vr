@@ -35,6 +35,24 @@ var NAVI = {
 
 };
 
+/* Scene */
+NAVI.Scene = function(name) {
+	this.name = name || '';
+	this.id = NAVI.Scene._id++;
+
+	this.children = [];
+};
+
+NAVI.Scene._id = 0;
+
+NAVI.Scene.prototype.add = function(object) {
+	_NAVI.addObjectToScene(this.name, object.name);
+};
+
+NAVI.Scene.prototype.remove = function(object) {
+	_NAVI.removeObjectFromScene(this.name, object.name);
+};
+
 /* Object3D */
 NAVI.Object3D = function(name, type) {
 	this.name = name;
@@ -88,6 +106,29 @@ NAVI.Object3D.prototype.setScale = function(x,y,z) {
 NAVI.Object3D.prototype.destroy = function() {
 	//_NAVI.destroyObject(this.name);
 };
+
+
+/* Object3D types */
+NAVI.Plane = function(name) {
+	NAVI.Object3D.call(this, name, 'plane');
+};
+NAVI.Plane.prototype = Object.create( NAVI.Object3D.prototype );
+
+NAVI.Box = function(name) {
+	NAVI.Object3D.call(this, name, 'cube');
+};
+NAVI.Box.prototype = Object.create( NAVI.Object3D.prototype );
+
+NAVI.Sphere = function(name) {
+	NAVI.Object3D.call(this, name, 'sphere');
+};
+NAVI.Sphere.prototype = Object.create( NAVI.Object3D.prototype );
+
+NAVI.Cylinder = function(name) {
+	NAVI.Object3D.call(this, name, 'cylinder');
+};
+NAVI.Cylinder.prototype = Object.create( NAVI.Object3D.prototype );
+
 
 /* util */
 NAVI.util = {

@@ -30,7 +30,9 @@ var frame = 0;
 var time = Date.now();
 var dt = 0;
 
-var cube = null;
+var scene = new NAVI.Scene('main');
+
+var earth;
 
 document.addEventListener("click", function(event) {
     NAVI.showToast("clicked pg @ "+ event.pageX +","+ event.pageY);
@@ -72,11 +74,13 @@ setTimeout(function(){
 
     NAVI.setValue("rate", "3");
 
-    cube = new NAVI.Object3D("cube-obj", "cube");
+    earth = new NAVI.Box("earth");
 
 }, 5*1000);
 
 setTimeout(function(){
+
+    scene.add(earth);
 
     step();
 
@@ -94,11 +98,11 @@ function step() {
     if (frame++ % 2) // 30fps
         return;
 
-    cube.rotate(angle, axis[0], axis[1], axis[2]);
+    earth.rotate(angle, axis[0], axis[1], axis[2]);
 
     angle += parseFloat( NAVI.getValue("rate") );
 
-    cube.setPosition(x, 0, y);
+    earth.setPosition(x, 0, y);
     x = Math.cos(frame/60) * radius;
     y = Math.sin(frame/60) * radius;
 

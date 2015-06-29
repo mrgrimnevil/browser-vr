@@ -137,8 +137,10 @@ public class BrowserScript extends GVRScript {
     }
 
 
+    /* Object */
     // make a scene object of type
     public GVRSceneObject createObject(String name, String type) {
+        // TODO: implement texturing
         GVRTexture texture = mContext.loadTexture(
                 new GVRAndroidResource(mContext, R.raw.earthmap1k ));
 
@@ -201,6 +203,25 @@ public class BrowserScript extends GVRScript {
         obj.getTransform().setScale(x, y, z);
     }
 
+    /* Scene */
+    public void addObjectToScene(String scene, String object) {
+        final GVRSceneObject obj = objects.get(object);
+        if (obj == null) {
+            return;
+        }
+
+        mContainer.addChildObject(obj);
+    }
+
+    public void removeObjectFromScene(String scene, String object) {
+        GVRSceneObject obj = objects.get(object);
+        if (obj == null)
+            return;
+
+        mContainer.removeChildObject(obj);
+    }
+
+    /* Background */
     public void setBackgroundColor(String colorStr) {
         try {
             int color = Color.parseColor(colorStr);
@@ -222,6 +243,7 @@ public class BrowserScript extends GVRScript {
     public void setValue(String key, String value) {
         dict.put(key, value);
     }
+
 
     @Override
     public void onStep() {
@@ -413,8 +435,6 @@ public class BrowserScript extends GVRScript {
             @Override
             public void run() {
                 GVRSceneObject obj = createObject(this.name, this.type);
-
-                mContainer.addChildObject(obj);
             }
         }
 

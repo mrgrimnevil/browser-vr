@@ -220,6 +220,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
             mScript.setValue(key, value);
         }
 
+        /* Background */
         @JavascriptInterface
         public void setBackgroundColor(String color) {
             mScript.setBackgroundColor(color);
@@ -230,6 +231,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
             mScript.setBackgroundImage(imageUrl);
         }
 
+        /* Objects */
         @JavascriptInterface
         public void rotateObject(String name, float angle, float x, float y, float z) {
             mScript.rotateObject(name, angle, x,y,z);
@@ -257,6 +259,17 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
         @JavascriptInterface
         public void createObject(String name, String type) {
             mScript.createNewObject(name, type);
+        }
+
+        /* Scene */
+        @JavascriptInterface
+        public void addObjectToScene(String scene, String object) {
+            mScript.addObjectToScene(scene, object);
+        }
+
+        @JavascriptInterface
+        public void removeObjectFromScene(String scene, String object) {
+            mScript.removeObjectFromScene(scene, object);
         }
     }
 
