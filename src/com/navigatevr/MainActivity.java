@@ -222,14 +222,25 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
 
         /* Background */
         @JavascriptInterface
+        public void setBackground(String bg) {
+            mScript.setBackground(bg);
+        }
+
+        @JavascriptInterface
         public void setBackgroundColor(String color) {
             mScript.setBackgroundColor(color);
+        }
+
+        @JavascriptInterface
+        public void setBackgroundGradient(String gradient) {
+            mScript.setBackgroundGradient(gradient);
         }
 
         @JavascriptInterface
         public void setBackgroundImage(String imageUrl) {
             mScript.setBackgroundImage(imageUrl);
         }
+
 
         /* Objects */
         @JavascriptInterface

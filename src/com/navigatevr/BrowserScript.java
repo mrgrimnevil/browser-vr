@@ -54,6 +54,8 @@ public class BrowserScript extends GVRScript {
 
     private Cursor mCursor;
 
+    private Background background;
+
     private Browser browser;
     private boolean browserFocused = true;
 
@@ -82,12 +84,12 @@ public class BrowserScript extends GVRScript {
         mScene = gvrContext.getNextMainScene();
         mRig = mScene.getMainCameraRig();
 
-        mRig.getLeftCamera().setBackgroundColor(Color.DKGRAY);
-        mRig.getRightCamera().setBackgroundColor(Color.DKGRAY);
-
-
         mContainer = new GVRSceneObject(gvrContext);
         mScene.addSceneObject(mContainer);
+
+        background = new Background(gvrContext);
+        background.setColor(Color.DKGRAY);
+        mScene.addSceneObject(background.getSceneObject());
 
         mCursor = new Cursor(mContext);
         mRig.getOwnerObject().addChildObject(mCursor.getSceneObject());
@@ -222,14 +224,39 @@ public class BrowserScript extends GVRScript {
     }
 
     /* Background */
+    public void setBackground(String bg) {
+        setBackgroundColor(bg);
+    }
+
     public void setBackgroundColor(String colorStr) {
         try {
-            int color = Color.parseColor(colorStr);
-            mRig.getLeftCamera().setBackgroundColor(color);
-            mRig.getRightCamera().setBackgroundColor(color);
+            final int color = Color.parseColor(colorStr);
+            mContext.runOnGlThread(new Runnable() {
+                @Override
+                public void run() {
+                    background.setColor(color);
+                }
+            });
         } catch (IllegalArgumentException e) {
             Log.w(TAG, "Exception : " + e);
         }
+    }
+
+    public void setBackgroundGradient(String gradient) {
+        String[] _colors = gradient.split(",");
+
+        final int[] colors = new int[_colors.length];
+
+        for (int i = 0; i < _colors.length; i++) {
+            colors[i] = Color.parseColor(_colors[i]);
+        }
+
+        mContext.runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                background.setGradient(colors);
+            }
+        });
     }
 
     public void setBackgroundImage(String imageUrl) {

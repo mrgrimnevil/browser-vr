@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="vr-background" content="#6699ff">
-    <title>index</title>
+  <meta charset="utf-8">
+  <meta name="vr-background" content="#ff0000,#0000ff">
+  <title>index</title>
 <style>
 body { font-family: sans-serif; }
 h1 { font-size: 64px; margin: 0px; text-align: center; }
@@ -35,54 +35,36 @@ var scene = new NAVI.Scene('main');
 var earth;
 
 document.addEventListener("click", function(event) {
-    NAVI.showToast("clicked pg @ "+ event.pageX +","+ event.pageY);
+  NAVI.showToast("clicked pg @ "+ event.pageX +","+ event.pageY);
 }, false);
 
 document.addEventListener("keydown", function(event) {
-    var code = event.keyCode || event.which;
-    NAVI.showToast("keydown " + code);
+  var code = event.keyCode || event.which;
+  NAVI.showToast("keydown " + code);
 });
 
 var bgButtons = document.getElementsByClassName("bg");
 
 for (var i = 0; i < bgButtons.length; i++) {
-    bgButtons[i].addEventListener("click", function(event) {
-        NAVI.setBackgroundColor( event.target.style.backgroundColor );
-        event.stopPropagation();
-    });
-}
-
-function processMeta() {
-    var metas = document.getElementsByTagName("meta");
-
-    for (i = 0; i < metas.length; i++) {
-        var meta = metas[i];
-        var name = meta.getAttribute("name");
-
-        if (name === "vr-background") {
-            var content = meta.getAttribute("content");
-            NAVI.setBackgroundColor( content );
-        }
-    }
+  bgButtons[i].addEventListener("click", function(event) {
+    NAVI.setBackground( event.target.style.backgroundColor );
+    event.stopPropagation();
+  });
 }
 
 setTimeout(function(){
-    processMeta();
-}, 3000);
 
-setTimeout(function(){
+  NAVI.setValue("rate", "3");
 
-    NAVI.setValue("rate", "3");
-
-    earth = new NAVI.Box("earth");
+  earth = new NAVI.Box("earth");
 
 }, 5*1000);
 
 setTimeout(function(){
 
-    scene.add(earth);
+  scene.add(earth);
 
-    step();
+  step();
 
 }, 10*1000);
 
@@ -93,22 +75,22 @@ var radius = 3;
 var x = 0;
 var y = 0;
 function step() {
-    requestAnimationFrame(step);
+  requestAnimationFrame(step);
 
-    if (frame++ % 2) // 30fps
-        return;
+  if (frame++ % 2) // 30fps
+    return;
 
-    earth.rotate(angle, axis[0], axis[1], axis[2]);
+  earth.rotate(angle, axis[0], axis[1], axis[2]);
 
-    angle += parseFloat( NAVI.getValue("rate") );
+  angle += parseFloat( NAVI.getValue("rate") );
 
-    earth.setPosition(x, 0, y);
-    x = Math.cos(frame/60) * radius;
-    y = Math.sin(frame/60) * radius;
+  earth.setPosition(x, 0, y);
+  x = Math.cos(frame/60) * radius;
+  y = Math.sin(frame/60) * radius;
 
 
-    dt = Date.now() - time;
-    time = Date.now();
+  dt = Date.now() - time;
+  time = Date.now();
 }
 
 </script>
