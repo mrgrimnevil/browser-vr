@@ -2,6 +2,7 @@ package com.navigatevr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -203,6 +204,23 @@ public class BrowserScript extends GVRScript {
             return;
 
         obj.getTransform().setScale(x, y, z);
+    }
+
+    // reset environment
+    public void reset() {
+        // remove all objects
+        Iterator<Map.Entry<String, GVRSceneObject>> it = objects.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, GVRSceneObject> entry = it.next();
+
+            GVRSceneObject object = entry.getValue();
+
+            mContainer.removeChildObject(object);
+        }
+        objects.clear();
+
+        // clear values
+        dict.clear();
     }
 
     /* Scene */

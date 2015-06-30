@@ -6,6 +6,7 @@ import org.gearvrf.GVRActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -85,6 +86,16 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                mScript.reset();
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+
             }
         });
 
